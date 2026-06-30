@@ -67,8 +67,26 @@ label{display:block;font-weight:800;margin:12px 0 6px}select,input{width:100%;pa
 <label>水の質量 g</label><div class="row"><input id="water" type="range" min="1" max="300" step="1" value="100"><input id="waterNum" type="number" min="0" step="0.1" value="100"></div>
 </div>
 
+<div id="coolInputModeBox" class="hidden">
+<label>冷却前の量を何で指定するか</label>
+<div class="miniSelect">
+<button id="bySolution" class="on">飽和溶液 g</button>
+<button id="byWater">溶媒 g</button>
+<button id="bySolute">溶質 g</button>
+<button id="byBoth">溶媒＋溶質</button>
+</div>
+</div>
+
 <div id="solutionBox" class="hidden">
 <label>飽和溶液の質量 g</label><div class="row"><input id="solutionMass" type="range" min="1" max="300" step="1" value="100"><input id="solutionMassNum" type="number" min="0" step="0.1" value="100"></div>
+</div>
+
+<div id="coolWaterBox" class="hidden">
+<label>冷却前の溶媒（水）g</label><div class="row"><input id="coolWater" type="range" min="1" max="300" step="1" value="80"><input id="coolWaterNum" type="number" min="0" step="0.1" value="80"></div>
+</div>
+
+<div id="coolSoluteBox" class="hidden">
+<label>冷却前に溶けている溶質 g</label><div class="row"><input id="coolSolute" type="range" min="0" max="300" step="0.1" value="20"><input id="coolSoluteNum" type="number" min="0" step="0.1" value="20"></div>
 </div>
 
 <div id="dissolvedBox" class="hidden">
@@ -82,6 +100,11 @@ label{display:block;font-weight:800;margin:12px 0 6px}select,input{width:100%;pa
 <div id="answer" class="result"></div>
 </section>
 </div>
+
+<section class="card">
+<h2>水和物の割合</h2>
+<div id="ratioInfo" class="ratioCard"></div>
+</section>
 
 <section class="card">
 <h2>ビーカー表示</h2>
@@ -101,7 +124,7 @@ label{display:block;font-weight:800;margin:12px 0 6px}select,input{width:100%;pa
 
 <script>
 const data={"KNO3": {"name": "硝酸カリウム KNO₃", "plain": "硝酸カリウム", "formula": "KNO₃", "values": {"0": 13.3, "10": 22.0, "20": 31.6, "30": 45.6, "40": 63.9, "60": 109, "80": 169, "100": 245}}, "CuSO4": {"name": "硫酸銅(II) CuSO₄", "plain": "硫酸銅(II)", "formula": "CuSO₄", "values": {"0": 14.0, "10": 17.0, "12": 15, "20": 20.2, "30": 24.1, "40": 28.7, "48": 25, "60": 39.9, "80": 56.0, "100": 94.9}}, "NaCl": {"name": "塩化ナトリウム NaCl", "plain": "塩化ナトリウム", "formula": "NaCl", "values": {"0": 35.7, "10": 35.7, "20": 35.8, "30": 36.1, "40": 36.3, "60": 37.1, "80": 38.0, "100": 39.3}}, "KCl": {"name": "塩化カリウム KCl", "plain": "塩化カリウム", "formula": "KCl", "values": {"0": 28.1, "10": 31.2, "20": 34.2, "30": 37.2, "40": 40.1, "60": 45.8, "80": 51.3, "100": 56.3}}, "AgNO3": {"name": "硝酸銀 AgNO₃", "plain": "硝酸銀", "formula": "AgNO₃", "values": {"0": 121, "10": 167, "20": 216, "30": 265, "40": 312, "60": 441, "80": 585, "100": 733}}, "NaNO3": {"name": "硝酸ナトリウム NaNO₃", "plain": "硝酸ナトリウム", "formula": "NaNO₃", "values": {"0": 73.0, "10": 80.5, "20": 88.0, "30": 96.1, "40": 105, "60": 124, "80": 148, "100": 175}}, "Na2SO4": {"name": "硫酸ナトリウム Na₂SO₄", "plain": "硫酸ナトリウム", "formula": "Na₂SO₄", "values": {"0": 4.5, "10": 9.0, "20": 19.0, "30": 41.2, "40": 49.7, "60": 45.1, "80": 43.3, "100": 42.2}}, "CaSO4": {"name": "硫酸カルシウム CaSO₄", "plain": "硫酸カルシウム", "formula": "CaSO₄", "values": {"0": 0.18, "10": 0.19, "20": 0.21, "30": 0.21, "40": 0.21, "60": 0.15, "80": 0.1, "100": 0.07}}, "ZnSO4": {"name": "硫酸亜鉛 ZnSO₄", "plain": "硫酸亜鉛", "formula": "ZnSO₄", "values": {"0": 41.6, "10": 47.3, "20": 53.8, "30": 69.4, "40": 75.4, "60": 72.1, "80": 65.0, "100": 60.5}}};
-let mode="max", temp=40, hot=60, cold=10;
+let mode="max", temp=40, hot=60, cold=10, coolInputMode="solution";
 function $(id){return document.getElementById(id)}function n(id){return Number($(id).value)}function f(x){return Math.round(x*10)/10}function fi(x){return Math.round(x)}
 function tempsFor(k){return Object.keys(data[k].values).map(Number).sort((a,b)=>a-b)}function s(k,t){return Number(data[k].values[t])}
 function pill(a,b){return `<div class="pill"><span>${a}</span><b>${b}</b></div>`}
@@ -137,8 +160,8 @@ function renderMax(){
 = ${f(w)} : ${f(amount)} : ${f(solution)}`;
 }
 function renderCool(){
- const key=$("sub").value, sH=s(key,hot), sC=s(key,cold), M=n("solutionMass");
- const water0=M*100/(100+sH), solute0=M*sH/(100+sH);
+ const key=$("sub").value, sH=s(key,hot), sC=s(key,cold);
+ const init=getInitialFromInput(key,sH), M=init.M, water0=init.water0, solute0=init.solute0;
  const soluteCold=water0*sC/100, crystal=Math.max(0,solute0-soluteCold);
  $("problem").innerHTML=`例題　${data[key].plain}の飽和溶液 ${f(M)}g を${hot}℃で調製し，これを${cold}℃に冷やすと，何gの結晶が析出するか。`;
  $("answer").innerHTML=pill("析出量",`${f(crystal)} g`)+pill("整数値",`${fi(crystal)} g`)+pill("冷却後に溶ける量",`${f(soluteCold)} g`)+pill("水",`${f(water0)} g`);
@@ -195,8 +218,8 @@ CuSO₄ : 水 = ${sol} : 100
 x = ${f(x)}g`;
 }
 function renderHydrateCool(){
- const sH=s("CuSO4",hot), sC=s("CuSO4",cold), M=n("solutionMass");
- const water0=M*100/(100+sH), cuso40=M*sH/(100+sH);
+ const sH=s("CuSO4",hot), sC=s("CuSO4",cold);
+ const init=getInitialFromInput("CuSO4",sH), M=init.M, water0=init.water0, cuso40=init.solute0;
  const x=(cuso40-sC*water0/100)/(0.64-0.36*sC/100);
  const crystal=Math.max(0,x), cuso4F=cuso40-0.64*crystal, waterF=water0-0.36*crystal;
  $("problem").innerHTML=`〔問題〕硫酸銅(II)の${hot}℃における飽和水溶液 ${f(M)}g を${cold}℃まで冷却すると，何gの結晶が析出するか。ただし，硫酸銅(II)の水に対する溶解度は，${hot}℃において${sH}，${cold}℃において${sC}であり，析出する結晶はCuSO₄・5H₂Oである。`;
@@ -245,6 +268,7 @@ function updateVisibility(){
 }
 function render(){
  updateVisibility();
+ renderRatio();
  const key=currentKey();
  renderButtons("tempBtns","temp",temp,key); renderButtons("hotBtns","hot",hot,key); renderButtons("coldBtns","cold",cold,key);
  if(mode==="max")renderMax();
@@ -256,7 +280,11 @@ function pair(a,b){$(a).oninput=()=>{$(b).value=$(a).value;render()};$(b).oninpu
 Object.keys(data).forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=data[k].name;$("sub").appendChild(o)});$("sub").value="KNO3";
 $("sub").onchange=()=>{temp=tempsFor($("sub").value).includes(40)?40:tempsFor($("sub").value)[0];hot=tempsFor($("sub").value).includes(60)?60:tempsFor($("sub").value).at(-1);cold=tempsFor($("sub").value).includes(10)?10:tempsFor($("sub").value)[0];render()};
 document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));b.classList.add("on");mode=b.dataset.mode;render();});
-pair("water","waterNum");pair("solutionMass","solutionMassNum");pair("dissolvedMass","dissolvedMassNum");
+pair("water","waterNum");pair("solutionMass","solutionMassNum");pair("dissolvedMass","dissolvedMassNum");pair("coolWater","coolWaterNum");pair("coolSolute","coolSoluteNum");
+$("bySolution").onclick=()=>{coolInputMode="solution";render();};
+$("byWater").onclick=()=>{coolInputMode="water";render();};
+$("bySolute").onclick=()=>{coolInputMode="solute";render();};
+$("byBoth").onclick=()=>{coolInputMode="both";render();};
 render();
 </script>
 </body></html>
