@@ -164,7 +164,7 @@ function renderButtons(box, kind, selected, key){
 
 function renderMax(){
  const key=$("sub").value, sol=s(key,temp), w=n("water"), amount=w*sol/100, solution=w+amount;
- $("problem").innerHTML=`問　${temp}℃の水 ${f(w)}g に${data[key].plain}は何gまで溶けるか。また，できる飽和溶液は何gか。`;
+ $("problem").innerHTML=`問　${temp}℃の水 ${f(w)}g に${data[key].plain}は何gまで溶けるか。また，できる飽和溶液は何gか。ただし，${data[key].plain}の${temp}℃における溶解度は${sol}である。`;
  $("answer").innerHTML=pill("答え",`${f(amount)} g`)+pill("整数値",`${fi(amount)} g`)+pill("溶液",`${f(solution)} g`)+pill("溶解度",`${sol}`);
  $("beakers").innerHTML=beaker("飽和溶液",w,amount,0);
  $("bars").innerHTML=bar("飽和溶液",[{label:`水 ${f(w)}g`,mass:w,cls:"water"},{label:`溶質 ${f(amount)}g`,mass:amount,cls:"solute"}]);
@@ -181,7 +181,7 @@ function renderCool(){
  const key=$("sub").value, sH=s(key,hot), sC=s(key,cold);
  const init=getInitial(sH), M=init.M, water0=init.water0, solute0=init.solute0;
  const soluteCold=water0*sC/100, crystal=Math.max(0,solute0-soluteCold);
- $("problem").innerHTML=`例題　${data[key].plain}の${hot}℃における飽和水溶液を${cold}℃に冷やす。${conditionSentence(init, data[key].formula)}このとき，何gの結晶が析出するか。`;
+ $("problem").innerHTML=`例題　${data[key].plain}の${hot}℃における飽和水溶液を${cold}℃に冷やす。${conditionSentence(init, data[key].formula)}ただし，${data[key].plain}の溶解度は，${hot}℃で${sH}，${cold}℃で${sC}である。このとき，何gの結晶が析出するか。`;
  $("answer").innerHTML=pill("析出量",`${f(crystal)} g`)+pill("整数値",`${fi(crystal)} g`)+pill("冷却前溶液",`${f(M)} g`)+pill("水",`${f(water0)} g`);
  $("beakers").innerHTML=beaker(`${hot}℃`,water0,solute0,0)+beaker(`${cold}℃`,water0,soluteCold,crystal);
  $("bars").innerHTML=bar("冷却前",[{label:`水 ${f(water0)}g`,mass:water0,cls:"water"},{label:`溶質 ${f(solute0)}g`,mass:solute0,cls:"solute"}])+bar("冷却後",[{label:`水 ${f(water0)}g`,mass:water0,cls:"water"},{label:`溶質 ${f(soluteCold)}g`,mass:soluteCold,cls:"solute"},{label:`結晶 ${f(crystal)}g`,mass:crystal,cls:"crystal"}]);
@@ -208,7 +208,7 @@ function renderHydrateDissolve(){
  const sol=s("CuSO4",temp), w=n("water");
  const x=sol*w/(64-0.36*sol);
  const cuso4=0.64*x, hyd=0.36*x, totalWater=w+hyd;
- $("problem").innerHTML=`例題　硫酸銅(II)五水和物 CuSO₄・5H₂O（式量250）は，${temp}℃の水 ${f(w)}g に何g溶けるか。溶けた水和物中にはCuSO₄部分と水和水が何g含まれ，できる飽和溶液は何gか。ただし，硫酸銅(II)CuSO₄（式量160）は${temp}℃の水100gに${sol}g溶けるものとする。`;
+ $("problem").innerHTML=`例題　硫酸銅(II)五水和物 CuSO₄・5H₂O（式量250）は，${temp}℃の水 ${f(w)}g に何g溶けるか。溶けた水和物中にはCuSO₄部分と水和水が何g含まれ，できる飽和溶液は何gか。ただし，硫酸銅(II)CuSO₄（式量160）の${temp}℃における溶解度は${sol}である。`;
  $("answer").innerHTML=pill("水和物",`${f(x)} g`)+pill("整数値",`${fi(x)} g`)+pill("CuSO₄部分",`${f(cuso4)} g`)+pill("水和水",`${f(hyd)} g`);
  $("beakers").innerHTML=beaker("水和物を溶かした後",totalWater,cuso4,0);
  $("bars").innerHTML=bar("加える水和物の内訳",[{label:`CuSO₄ ${f(cuso4)}g`,mass:cuso4,cls:"solute"},{label:`水和水 ${f(hyd)}g`,mass:hyd,cls:"hydrate"}])+bar("できた飽和溶液",[{label:`水 ${f(totalWater)}g`,mass:totalWater,cls:"water"},{label:`CuSO₄ ${f(cuso4)}g`,mass:cuso4,cls:"solute"}]);
@@ -230,7 +230,7 @@ function renderHydrateCool(){
  const init=getInitial(sH), M=init.M, water0=init.water0, cuso40=init.solute0;
  let x=(cuso40-sC*water0/100)/(0.64-0.36*sC/100);
  const crystal=Math.max(0,x), cuso4F=cuso40-0.64*crystal, waterF=water0-0.36*crystal;
- $("problem").innerHTML=`〔問題〕硫酸銅(II)の${hot}℃における飽和水溶液を${cold}℃まで冷却する。${conditionSentence(init, "CuSO₄")}このとき，何gの結晶が析出するか。ただし，析出する結晶はCuSO₄・5H₂Oである。`;
+ $("problem").innerHTML=`〔問題〕硫酸銅(II)の${hot}℃における飽和水溶液を${cold}℃まで冷却する。${conditionSentence(init, "CuSO₄")}ただし，硫酸銅(II)CuSO₄の溶解度は，${hot}℃で${sH}，${cold}℃で${sC}であり，析出する結晶はCuSO₄・5H₂Oである。このとき，何gの結晶が析出するか。`;
  $("answer").innerHTML=pill("析出結晶",`${f(crystal)} g`)+pill("整数値",`${fi(crystal)} g`)+pill("残るCuSO₄",`${f(cuso4F)} g`)+pill("残る水",`${f(waterF)} g`);
  $("beakers").innerHTML=beaker(`${hot}℃`,water0,cuso40,0)+beaker(`${cold}℃`,waterF,cuso4F,crystal);
  $("bars").innerHTML=bar("冷却前",[{label:`水 ${f(water0)}g`,mass:water0,cls:"water"},{label:`CuSO₄ ${f(cuso40)}g`,mass:cuso40,cls:"solute"}])+bar("析出した結晶の内訳",[{label:`CuSO₄ ${f(0.64*crystal)}g`,mass:0.64*crystal,cls:"solute"},{label:`結晶水 ${f(0.36*crystal)}g`,mass:0.36*crystal,cls:"hydrate"}])+bar("冷却後の溶液",[{label:`水 ${f(waterF)}g`,mass:Math.max(0,waterF),cls:"water"},{label:`CuSO₄ ${f(cuso4F)}g`,mass:Math.max(0,cuso4F),cls:"solute"}]);
