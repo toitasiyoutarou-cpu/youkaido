@@ -1,271 +1,262 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>10℃刻み 溶解度 可視化</title>
+<title>溶解度 問題文形式 可視化</title>
 <style>
-:root{
- --bg:#f6f8fb;--card:#fff;--ink:#1f2937;--muted:#64748b;--line:#e5e7eb;
- --water:#93c5fd;--solute:#86efac;--solution:#ddd6fe;--crystal:#fca5a5;--hydrate:#fcd34d;--accent:#2563eb;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif}
-header{padding:22px 14px;text-align:center;background:linear-gradient(135deg,#dbeafe,#dcfce7)}
-h1{margin:0;font-size:clamp(22px,4vw,34px)} p{margin:.4em 0;color:var(--muted)}
-main{max-width:1160px;margin:auto;padding:16px;display:grid;gap:14px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 8px 25px #0f172a0b}
-.grid{display:grid;grid-template-columns:390px 1fr;gap:14px} @media(max-width:900px){.grid{grid-template-columns:1fr}}
-.tabs{display:flex;gap:8px;flex-wrap:wrap}
-.tab{border:1px solid var(--line);border-radius:999px;background:#fff;padding:9px 13px;font-weight:800;cursor:pointer}
-.tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-label{display:block;font-weight:800;margin:12px 0 6px}
-select,input{width:100%;font-size:15px;padding:9px;border:1px solid var(--line);border-radius:10px;background:white}
-input[type=range]{padding:0;accent-color:var(--accent)}
-.row{display:grid;grid-template-columns:1fr 78px;gap:8px;align-items:center}
-.tempBtns{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:8px}
-.tempBtns button{padding:8px 0;border:1px solid var(--line);background:#fff;border-radius:9px;font-weight:800;cursor:pointer}
-.tempBtns button.on{background:#dbeafe;border-color:#60a5fa}
-.barbox{display:grid;gap:12px}
-.barLabel{display:flex;justify-content:space-between;font-weight:800;font-size:14px;margin-bottom:5px}
-.bar{height:42px;border:1px solid var(--line);border-radius:999px;overflow:hidden;display:flex;background:#f8fafc}
-.seg{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;white-space:nowrap;min-width:0}
-.water{background:var(--water)} .solute{background:var(--solute)} .solution{background:var(--solution)} .crystal{background:var(--crystal)} .hydrate{background:var(--hydrate)}
-.result{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px} @media(max-width:700px){.result{grid-template-columns:1fr}}
-.pill{border:1px solid var(--line);border-radius:14px;background:#f8fafc;padding:12px}
-.pill span{font-size:13px;color:var(--muted)} .pill b{display:block;font-size:22px;margin-top:2px}
+:root{--bg:#f6f8fb;--card:#fff;--ink:#1f2937;--muted:#64748b;--line:#e5e7eb;--water:#93c5fd;--solute:#86efac;--crystal:#fca5a5;--hydrate:#fcd34d;--accent:#2563eb}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif}
+header{padding:22px 14px;text-align:center;background:linear-gradient(135deg,#dbeafe,#dcfce7)}h1{margin:0;font-size:clamp(22px,4vw,34px)}p{color:var(--muted)}
+main{max-width:1160px;margin:auto;padding:16px;display:grid;gap:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 8px 25px #0f172a0b}
+.grid{display:grid;grid-template-columns:390px 1fr;gap:14px}@media(max-width:900px){.grid{grid-template-columns:1fr}}
+label{display:block;font-weight:800;margin:12px 0 6px}select,input{width:100%;padding:9px;border:1px solid var(--line);border-radius:10px;font-size:15px;background:white}
+.row{display:grid;grid-template-columns:1fr 92px;gap:8px;align-items:center}input[type=range]{padding:0;accent-color:var(--accent)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}.tab{border:1px solid var(--line);border-radius:999px;background:#fff;padding:9px 13px;font-weight:900;cursor:pointer}.tab.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tempBtns{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}.tempBtns button{padding:9px 0;border:1px solid var(--line);background:white;border-radius:9px;font-weight:900;cursor:pointer}.tempBtns button.on{background:#dbeafe;border-color:#60a5fa;color:#1d4ed8}
+.problem{font-size:18px;line-height:1.9;background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:16px}
+.barLabel{display:flex;justify-content:space-between;font-weight:800;font-size:14px;margin:12px 0 5px}.bar{height:46px;border:1px solid var(--line);border-radius:999px;overflow:hidden;display:flex;background:#f8fafc}
+.seg{display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;white-space:nowrap;min-width:0}.water{background:var(--water)}.solute{background:var(--solute)}.crystal{background:var(--crystal)}.hydrate{background:var(--hydrate)}
+.result{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}@media(max-width:760px){.result{grid-template-columns:1fr 1fr}}
+.pill{border:1px solid var(--line);border-radius:14px;background:#f8fafc;padding:12px}.pill span{font-size:13px;color:var(--muted)}.pill b{display:block;font-size:20px;margin-top:2px}
 .formula{background:#0f172a;color:#f8fafc;border-radius:14px;padding:14px;line-height:1.75;white-space:pre-wrap;font-family:Consolas,Menlo,monospace;overflow:auto}
-table{width:100%;border-collapse:collapse;font-size:13px} th,td{border-bottom:1px solid var(--line);padding:7px;text-align:right} th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:white}
-.missing{color:#94a3b8} .note{background:#fffbeb;border:1px solid #fde68a;color:#78350f;border-radius:12px;padding:10px;font-size:14px}
+.beakers{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:700px){.beakers{grid-template-columns:1fr}}
+.beaker{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fff}.cup{height:190px;border:5px solid #94a3b8;border-top:0;border-radius:0 0 26px 26px;position:relative;overflow:hidden;background:#f8fafc;margin-top:12px}
+.liquid{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(#bfdbfe,#93c5fd);display:flex;align-items:center;justify-content:center;font-weight:900}
+.solid{position:absolute;bottom:0;left:0;right:0;background:repeating-linear-gradient(45deg,#fca5a5,#fca5a5 8px,#fecaca 8px,#fecaca 16px);display:flex;align-items:center;justify-content:center;font-weight:900}
+.note{background:#fffbeb;border:1px solid #fde68a;color:#78350f;border-radius:12px;padding:10px;font-size:14px}
+.hidden{display:none}
 </style>
 </head>
 <body>
-<header>
-<h1>10℃刻み 溶解度 可視化</h1>
-<p>溶質：溶媒：溶液の質量比をバーで確認する教材</p>
-</header>
+<header><h1>溶解度 問題文形式 可視化</h1><p>問題文・ビーカー・質量比バー・数式を同時に表示</p></header>
 <main>
 <section class="card">
- <div class="tabs">
-  <button class="tab active" data-mode="sat">飽和溶液</button>
-  <button class="tab" data-mode="cool">冷却・再結晶</button>
-  <button class="tab" data-mode="hydrate">水和物 CuSO₄・5H₂O</button>
- </div>
+<div class="tabs">
+<button class="tab on" data-mode="max">水○gに何gまで溶けるか</button>
+<button class="tab" data-mode="cool">飽和溶液を冷やす</button>
+<button class="tab" data-mode="hydrateDissolve">水和物は何g溶けるか</button>
+<button class="tab" data-mode="hydrateCool">水和物として析出</button>
+</div>
 </section>
 
 <div class="grid">
 <section class="card">
-<h2>操作</h2>
-<div id="normalControls">
+<h2>条件</h2>
+<div id="normalSubBox">
 <label>物質</label><select id="sub"></select>
-<label>温度：<span id="tempView">60</span>℃</label>
-<div class="row"><input id="temp" type="range" min="0" max="100" step="10" value="60"><input id="tempNum" type="number" min="0" max="100" step="10" value="60"></div>
-<div class="tempBtns" id="tempBtns"></div>
-<label>水の質量 g</label>
-<div class="row"><input id="water" type="range" min="10" max="300" step="10" value="100"><input id="waterNum" type="number" min="1" max="1000" value="100"></div>
 </div>
 
-<div id="coolControls" style="display:none">
-<label>冷却する物質</label>
-<select id="coolSub"><option value="KNO3">硝酸カリウム KNO₃</option><option value="CuSO4hyd">硫酸銅(II)：CuSO₄・5H₂Oとして析出</option></select>
-<label>はじめの温度：<span id="hotView">60</span>℃</label>
-<div class="row"><input id="hot" type="range" min="0" max="100" step="10" value="60"><input id="hotNum" type="number" min="0" max="100" step="10" value="60"></div>
-<label>冷却後の温度：<span id="coldView">10</span>℃</label>
-<div class="row"><input id="cold" type="range" min="0" max="100" step="10" value="10"><input id="coldNum" type="number" min="0" max="100" step="10" value="10"></div>
-<label>はじめの飽和溶液 g</label>
-<div class="row"><input id="solMass" type="range" min="20" max="300" step="10" value="100"><input id="solMassNum" type="number" min="1" max="1000" value="100"></div>
+<div id="hydrateSubBox" class="hidden">
+<label>水和物</label>
+<select id="hydrateSalt">
+<option value="CuSO4_5H2O">硫酸銅(II)五水和物 CuSO₄・5H₂O（式量250 / CuSO₄部分160）</option>
+</select>
 </div>
 
-<div id="hydrateControls" style="display:none">
-<label>温度：<span id="hTempView">60</span>℃</label>
-<div class="row"><input id="hTemp" type="range" min="0" max="100" step="10" value="60"><input id="hTempNum" type="number" min="0" max="100" step="10" value="60"></div>
-<label>最初の水 g</label>
-<div class="row"><input id="hWater" type="range" min="10" max="300" step="10" value="100"><input id="hWaterNum" type="number" min="1" max="1000" value="100"></div>
+<div id="oneTemp">
+<label>温度</label><div id="tempBtns" class="tempBtns"></div>
+</div>
+
+<div id="twoTemp" class="hidden">
+<label>高温</label><div id="hotBtns" class="tempBtns"></div>
+<label>低温</label><div id="coldBtns" class="tempBtns"></div>
+</div>
+
+<div id="waterBox">
+<label>水の質量 g</label><div class="row"><input id="water" type="range" min="1" max="300" step="1" value="100"><input id="waterNum" type="number" min="0" step="0.1" value="100"></div>
+</div>
+
+<div id="solutionBox" class="hidden">
+<label>飽和溶液の質量 g</label><div class="row"><input id="solutionMass" type="range" min="1" max="300" step="1" value="100"><input id="solutionMassNum" type="number" min="0" step="0.1" value="100"></div>
+</div>
+
+<div id="dissolvedBox" class="hidden">
+<label>高温の水に溶かした溶質 g</label><div class="row"><input id="dissolvedMass" type="range" min="0" max="300" step="0.1" value="40"><input id="dissolvedMassNum" type="number" min="0" step="0.1" value="40"></div>
 </div>
 </section>
 
 <section class="card">
-<h2>バー表示</h2>
-<div id="bars" class="barbox"></div>
-<div id="result" class="result"></div>
+<h2>問題文</h2>
+<div id="problem" class="problem"></div>
+<div id="answer" class="result"></div>
 </section>
 </div>
+
+<section class="card">
+<h2>ビーカー表示</h2>
+<div id="beakers" class="beakers"></div>
+</section>
+
+<section class="card">
+<h2>質量比バー</h2>
+<div id="bars"></div>
+</section>
 
 <section class="card">
 <h2>数式</h2>
 <div id="formula" class="formula"></div>
 </section>
-
-<section class="card">
-<h2>溶解度データ（水100gに溶ける溶質g）</h2>
-<div class="note">温度は0,10,20,…100℃だけ。表にない値は「—」として扱い、温度バーでは選んでも計算しません。</div>
-<div style="overflow:auto;margin-top:10px"><table id="table"></table></div>
-</section>
 </main>
 
 <script>
-const temps=[0,10,20,30,40,50,60,70,80,90,100];
-const data={"AgNO3": {"name": "硝酸銀 AgNO₃", "values": {"0": 121, "10": 167, "20": 216, "30": 265, "40": 312, "50": null, "60": 441, "70": null, "80": 585, "90": null, "100": 733}}, "AlCl3": {"name": "塩化アルミニウム AlCl₃", "values": {"0": 43.9, "10": 46.4, "20": 46.6, "30": 47.1, "40": 47.3, "50": null, "60": 47.7, "70": null, "80": 48.6, "90": null, "100": 49.9}}, "Al2SO43": {"name": "硫酸アルミニウム Al₂(SO₄)₃", "values": {"0": 37.9, "10": 38.1, "20": 38.3, "30": 38.9, "40": 40.4, "50": null, "60": 44.9, "70": null, "80": 55.3, "90": null, "100": 80.5}}, "BaCl2": {"name": "塩化バリウム BaCl₂", "values": {"0": 31.2, "10": 33.3, "20": 35.7, "30": 38.3, "40": 40.6, "50": null, "60": 46.2, "70": null, "80": 52.2, "90": null, "100": 60.0}}, "BaOH2": {"name": "水酸化バリウム Ba(OH)₂", "values": {"0": 1.68, "10": 2.48, "20": 3.89, "30": 5.59, "40": 8.23, "50": null, "60": 21.0, "70": null, "80": 101, "90": null, "100": null}}, "CaCl2": {"name": "塩化カルシウム CaCl₂", "values": {"0": 59.5, "10": 64.7, "20": 74.5, "30": 100, "40": 115, "50": null, "60": 137, "70": null, "80": 147, "90": null, "100": 159}}, "CaOH2": {"name": "水酸化カルシウム Ca(OH)₂", "values": {"0": 0.19, "10": 0.18, "20": null, "30": 0.16, "40": 0.14, "50": null, "60": 0.12, "70": null, "80": 0.11, "90": null, "100": 0.07}}, "CaSO4": {"name": "硫酸カルシウム CaSO₄", "values": {"0": 0.18, "10": 0.19, "20": 0.21, "30": 0.21, "40": 0.21, "50": null, "60": 0.15, "70": null, "80": 0.1, "90": null, "100": 0.07}}, "CuCl2": {"name": "塩化銅(II) CuCl₂", "values": {"0": 68.6, "10": 70.9, "20": 73.3, "30": 76.7, "40": 79.9, "50": null, "60": 87.3, "70": null, "80": 98.0, "90": null, "100": 111}}, "CuSO4": {"name": "硫酸銅(II) CuSO₄", "values": {"0": 14.0, "10": 17.0, "20": 20.2, "30": 24.1, "40": 28.7, "50": null, "60": 39.9, "70": null, "80": 56.0, "90": null, "100": 94.9}}, "KBr": {"name": "臭化カリウム KBr", "values": {"0": 53.6, "10": 59.5, "20": 65.0, "30": 70.6, "40": 76.1, "50": null, "60": 85.5, "70": null, "80": 94.9, "90": null, "100": 104}}, "KCl": {"name": "塩化カリウム KCl", "values": {"0": 28.1, "10": 31.2, "20": 34.2, "30": 37.2, "40": 40.1, "50": null, "60": 45.8, "70": null, "80": 51.3, "90": null, "100": 56.3}}, "KClO3": {"name": "塩素酸カリウム KClO₃", "values": {"0": 3.31, "10": 5.15, "20": 7.3, "30": 10.1, "40": 13.9, "50": null, "60": 23.8, "70": null, "80": 37.6, "90": null, "100": 56.3}}, "KNO3": {"name": "硝酸カリウム KNO₃", "values": {"0": 13.3, "10": 22.0, "20": 31.6, "30": 45.6, "40": 63.9, "50": null, "60": 109, "70": null, "80": 169, "90": null, "100": 245}}, "NaCl": {"name": "塩化ナトリウム NaCl", "values": {"0": 35.7, "10": 35.7, "20": 35.8, "30": 36.1, "40": 36.3, "50": null, "60": 37.1, "70": null, "80": 38.0, "90": null, "100": 39.3}}, "NaNO3": {"name": "硝酸ナトリウム NaNO₃", "values": {"0": 73.0, "10": 80.5, "20": 88.0, "30": 96.1, "40": 105, "50": null, "60": 124, "70": null, "80": 148, "90": null, "100": 175}}, "NaOH": {"name": "水酸化ナトリウム NaOH", "values": {"0": 83.5, "10": 103, "20": 109, "30": 119, "40": 129, "50": null, "60": 223, "70": null, "80": 288, "90": null, "100": 365}}, "Na2SO4": {"name": "硫酸ナトリウム Na₂SO₄", "values": {"0": 4.5, "10": 9.0, "20": 19.0, "30": 41.2, "40": 49.7, "50": null, "60": 45.1, "70": null, "80": 43.3, "90": null, "100": 42.2}}, "ZnSO4": {"name": "硫酸亜鉛 ZnSO₄", "values": {"0": 41.6, "10": 47.3, "20": 53.8, "30": 69.4, "40": 75.4, "50": null, "60": 72.1, "70": null, "80": 65.0, "90": null, "100": 60.5}}};
-let mode="sat";
-
-function $(id){return document.getElementById(id)}
-function val(id){return Number($(id).value)}
-function sol(sub,t){const v=data[sub]?.values?.[t]; return v==null ? null : Number(v)}
-function f(x){return Math.round(x*10)/10}
-function pct(x,total){return total>0?Math.max(0,x/total*100):0}
+const data={"KNO3": {"name": "硝酸カリウム KNO₃", "plain": "硝酸カリウム", "formula": "KNO₃", "values": {"0": 13.3, "10": 22.0, "20": 31.6, "30": 45.6, "40": 63.9, "60": 109, "80": 169, "100": 245}}, "CuSO4": {"name": "硫酸銅(II) CuSO₄", "plain": "硫酸銅(II)", "formula": "CuSO₄", "values": {"0": 14.0, "10": 17.0, "12": 15, "20": 20.2, "30": 24.1, "40": 28.7, "48": 25, "60": 39.9, "80": 56.0, "100": 94.9}}, "NaCl": {"name": "塩化ナトリウム NaCl", "plain": "塩化ナトリウム", "formula": "NaCl", "values": {"0": 35.7, "10": 35.7, "20": 35.8, "30": 36.1, "40": 36.3, "60": 37.1, "80": 38.0, "100": 39.3}}, "KCl": {"name": "塩化カリウム KCl", "plain": "塩化カリウム", "formula": "KCl", "values": {"0": 28.1, "10": 31.2, "20": 34.2, "30": 37.2, "40": 40.1, "60": 45.8, "80": 51.3, "100": 56.3}}, "AgNO3": {"name": "硝酸銀 AgNO₃", "plain": "硝酸銀", "formula": "AgNO₃", "values": {"0": 121, "10": 167, "20": 216, "30": 265, "40": 312, "60": 441, "80": 585, "100": 733}}, "NaNO3": {"name": "硝酸ナトリウム NaNO₃", "plain": "硝酸ナトリウム", "formula": "NaNO₃", "values": {"0": 73.0, "10": 80.5, "20": 88.0, "30": 96.1, "40": 105, "60": 124, "80": 148, "100": 175}}, "Na2SO4": {"name": "硫酸ナトリウム Na₂SO₄", "plain": "硫酸ナトリウム", "formula": "Na₂SO₄", "values": {"0": 4.5, "10": 9.0, "20": 19.0, "30": 41.2, "40": 49.7, "60": 45.1, "80": 43.3, "100": 42.2}}, "CaSO4": {"name": "硫酸カルシウム CaSO₄", "plain": "硫酸カルシウム", "formula": "CaSO₄", "values": {"0": 0.18, "10": 0.19, "20": 0.21, "30": 0.21, "40": 0.21, "60": 0.15, "80": 0.1, "100": 0.07}}, "ZnSO4": {"name": "硫酸亜鉛 ZnSO₄", "plain": "硫酸亜鉛", "formula": "ZnSO₄", "values": {"0": 41.6, "10": 47.3, "20": 53.8, "30": 69.4, "40": 75.4, "60": 72.1, "80": 65.0, "100": 60.5}}};
+let mode="max", temp=40, hot=60, cold=10;
+function $(id){return document.getElementById(id)}function n(id){return Number($(id).value)}function f(x){return Math.round(x*10)/10}function fi(x){return Math.round(x)}
+function tempsFor(k){return Object.keys(data[k].values).map(Number).sort((a,b)=>a-b)}function s(k,t){return Number(data[k].values[t])}
 function pill(a,b){return `<div class="pill"><span>${a}</span><b>${b}</b></div>`}
-function bar(title,items){
- const total=items.reduce((s,i)=>s+i.mass,0);
- return `<div><div class="barLabel"><span>${title}</span><span>合計 ${f(total)} g</span></div><div class="bar">`+
- items.map(i=>`<div class="seg ${i.cls}" style="width:${pct(i.mass,total)}%">${pct(i.mass,total)>11?i.label:""}</div>`).join("")+
- `</div></div>`;
+function pct(x,t){return t>0?Math.max(0,x/t*100):0}
+function bar(title,items){const total=items.reduce((a,i)=>a+i.mass,0);return `<div><div class="barLabel"><span>${title}</span><span>合計 ${f(total)} g</span></div><div class="bar">`+items.map(i=>`<div class="seg ${i.cls}" style="width:${pct(i.mass,total)}%">${pct(i.mass,total)>10?i.label:""}</div>`).join("")+`</div></div>`}
+function beaker(title,water,solute,crystal=0){
+ const max=Math.max(1,water+solute+crystal), liqH=Math.max(8,Math.min(160,(water+solute)/max*170)), solH=crystal>0?Math.max(8,Math.min(80,crystal/max*170)):0;
+ return `<div class="beaker"><b>${title}</b><div class="cup"><div class="liquid" style="height:${liqH}px">溶液 ${f(water+solute)}g</div><div class="solid" style="height:${solH}px">${crystal>0?"結晶 "+f(crystal)+"g":""}</div></div><p>水 ${f(water)}g / 溶質 ${f(solute)}g${crystal>0?" / 結晶 "+f(crystal)+"g":""}</p></div>`;
 }
-function noData(t){$("bars").innerHTML="";$("result").innerHTML=pill("データなし",`${t}℃は表に数値がありません`);$("formula").textContent="表にある10℃刻みの数値だけで扱います。別温度を使う場合は、表に数値を入力してください。";}
-
-function renderSat(){
- const s=sol($("sub").value,val("temp")); if(s==null) return noData(val("temp"));
- const w=val("water"), solute=w*s/100, solution=w+solute;
+function renderButtons(box, kind, selected, key){
+ const ts=tempsFor(key); $(box).innerHTML="";
+ if(!ts.includes(selected)){ if(kind==="temp")temp=ts.includes(40)?40:ts[0]; if(kind==="hot")hot=ts.includes(60)?60:ts[ts.length-1]; if(kind==="cold")cold=ts.includes(10)?10:ts[0]; selected=kind==="temp"?temp:kind==="hot"?hot:cold; }
+ ts.forEach(t=>{const b=document.createElement("button");b.textContent=t+"℃";b.className=t===selected?"on":"";b.onclick=()=>{if(kind==="temp")temp=t;if(kind==="hot")hot=t;if(kind==="cold")cold=t;render();};$(box).appendChild(b);});
+}
+function currentKey(){return mode.startsWith("hydrate")?"CuSO4":$("sub").value}
+function renderMax(){
+ const key=$("sub").value, sol=s(key,temp), w=n("water"), amount=w*sol/100, solution=w+amount;
+ $("problem").innerHTML=`問　${temp}℃の水 ${f(w)}g に${data[key].plain}は何gまで溶けるか。`;
+ $("answer").innerHTML=pill("答え",`${f(amount)} g`)+pill("整数値",`${fi(amount)} g`)+pill("溶液",`${f(solution)} g`)+pill("溶解度",`${sol}`);
+ $("beakers").innerHTML=beaker("飽和溶液",w,amount,0);
  $("bars").innerHTML=bar("飽和溶液",[
   {label:`水 ${f(w)}g`,mass:w,cls:"water"},
-  {label:`溶質 ${f(solute)}g`,mass:solute,cls:"solute"}
+  {label:`溶質 ${f(amount)}g`,mass:amount,cls:"solute"}
  ]);
- $("result").innerHTML=pill("溶解度",`${s} g / 水100g`)+pill("溶質",`${f(solute)} g`)+pill("溶液",`${f(solution)} g`);
- $("formula").textContent=`溶解度 s = ${s} g / 水100g
-
-溶媒 : 溶質 : 溶液
-= 100 : s : (100+s)
-= 100 : ${s} : ${f(100+s)}
+ $("formula").textContent=`溶解度 = 水100gに${data[key].formula} ${sol}g
 
 水 ${f(w)}g のとき
-溶質 = ${f(w)} × ${s} / 100 = ${f(solute)}g
-溶液 = ${f(w)} + ${f(solute)} = ${f(solution)}g`;
-}
+溶ける量 = ${f(w)} × ${sol} / 100
+= ${f(amount)}g
 
-function renderHydrate(){
- const s=sol("CuSO4",val("hTemp")); if(s==null) return noData(val("hTemp"));
- const w0=val("hWater");
- const x=(s*w0)/(160-0.36*s);
- const cuso4=160/250*x, hyd=90/250*x;
- $("bars").innerHTML=
-  bar("加える CuSO₄・5H₂O の内訳",[
-   {label:`CuSO₄ ${f(cuso4)}g`,mass:cuso4,cls:"solute"},
-   {label:`水和水 ${f(hyd)}g`,mass:hyd,cls:"hydrate"}
-  ])+
-  bar("できた飽和溶液",[
-   {label:`水 ${f(w0+hyd)}g`,mass:w0+hyd,cls:"water"},
-   {label:`CuSO₄ ${f(cuso4)}g`,mass:cuso4,cls:"solute"}
-  ]);
- $("result").innerHTML=pill("CuSO₄の溶解度",`${s} g`)+pill("水和物",`${f(x)} g`)+pill("整数値",`${Math.round(x)} g`);
+溶媒 : 溶質 : 溶液
+= 100 : ${sol} : ${f(100+sol)}
+= ${f(w)} : ${f(amount)} : ${f(solution)}`;
+}
+function renderCool(){
+ const key=$("sub").value, sH=s(key,hot), sC=s(key,cold), M=n("solutionMass");
+ const water0=M*100/(100+sH), solute0=M*sH/(100+sH);
+ const soluteCold=water0*sC/100, crystal=Math.max(0,solute0-soluteCold);
+ $("problem").innerHTML=`例題　${data[key].plain}の飽和溶液 ${f(M)}g を${hot}℃で調製し，これを${cold}℃に冷やすと，何gの結晶が析出するか。`;
+ $("answer").innerHTML=pill("析出量",`${f(crystal)} g`)+pill("整数値",`${fi(crystal)} g`)+pill("冷却後に溶ける量",`${f(soluteCold)} g`)+pill("水",`${f(water0)} g`);
+ $("beakers").innerHTML=beaker(`${hot}℃`,water0,solute0,0)+beaker(`${cold}℃`,water0,soluteCold,crystal);
+ $("bars").innerHTML=bar("冷却前の飽和溶液",[
+  {label:`水 ${f(water0)}g`,mass:water0,cls:"water"},
+  {label:`溶質 ${f(solute0)}g`,mass:solute0,cls:"solute"}
+ ])+bar("冷却後",[
+  {label:`水 ${f(water0)}g`,mass:water0,cls:"water"},
+  {label:`溶質 ${f(soluteCold)}g`,mass:soluteCold,cls:"solute"},
+  {label:`結晶 ${f(crystal)}g`,mass:crystal,cls:"crystal"}
+ ]);
+ $("formula").textContent=`${hot}℃の溶解度 = ${sH}g
+飽和溶液の比
+水 : 溶質 : 溶液 = 100 : ${sH} : ${f(100+sH)}
+
+飽和溶液 ${f(M)}g 中
+水 = ${f(M)} × 100 / ${f(100+sH)} = ${f(water0)}g
+溶質 = ${f(M)} × ${sH} / ${f(100+sH)} = ${f(solute0)}g
+
+${cold}℃の溶解度 = ${sC}g
+冷却後に溶けていられる量
+= ${f(water0)} × ${sC} / 100
+= ${f(soluteCold)}g
+
+析出量 = ${f(solute0)} - ${f(soluteCold)}
+= ${f(crystal)}g`;
+}
+function renderHydrateDissolve(){
+ const sol=s("CuSO4",temp), w=n("water");
+ const x=sol*w/(64-0.36*sol); // because CuSO4 = 0.64x and water total = w+0.36x; ratio CuSO4/water = sol/100
+ const cuso4=0.64*x, hyd=0.36*x, totalWater=w+hyd;
+ $("problem").innerHTML=`例題　硫酸銅(II)五水和物 CuSO₄・5H₂O（式量250）は，${temp}℃の水 ${f(w)}g に何g溶けるか。ただし，硫酸銅(II)CuSO₄（式量160）は${temp}℃の水100gに${sol}g溶けるものとする。`;
+ $("answer").innerHTML=pill("水和物",`${f(x)} g`)+pill("整数値",`${fi(x)} g`)+pill("CuSO₄部分",`${f(cuso4)} g`)+pill("水和水",`${f(hyd)} g`);
+ $("beakers").innerHTML=beaker("水和物を溶かした後",totalWater,cuso4,0);
+ $("bars").innerHTML=bar("加える水和物の内訳",[
+  {label:`CuSO₄ ${f(cuso4)}g`,mass:cuso4,cls:"solute"},
+  {label:`水和水 ${f(hyd)}g`,mass:hyd,cls:"hydrate"}
+ ])+bar("できた飽和溶液",[
+  {label:`水 ${f(totalWater)}g`,mass:totalWater,cls:"water"},
+  {label:`CuSO₄ ${f(cuso4)}g`,mass:cuso4,cls:"solute"}
+ ]);
  $("formula").textContent=`CuSO₄・5H₂Oを x g 溶かす
 
-CuSO₄部分 = 160/250 x
-水和水 = 90/250 x
-溶液全体 = ${w0} + x
+CuSO₄部分 = 160/250 x = 0.64x
+水和水 = 90/250 x = 0.36x
+溶媒としての水 = ${f(w)} + 0.36x
 
-溶解度 ${s} より
-溶液 : 溶質 = (100+${s}) : ${s}
+溶解度 ${sol} より
+CuSO₄ : 水 = ${sol} : 100
 
-(${w0} + x) : (160/250 x)
-= ${f(100+s)} : ${s}
+0.64x : (${f(w)} + 0.36x) = ${sol} : 100
 
-x = ${f(x)} g`;
+x = ${f(x)}g`;
 }
+function renderHydrateCool(){
+ const sH=s("CuSO4",hot), sC=s("CuSO4",cold), M=n("solutionMass");
+ const water0=M*100/(100+sH), cuso40=M*sH/(100+sH);
+ const x=(cuso40-sC*water0/100)/(0.64-0.36*sC/100);
+ const crystal=Math.max(0,x), cuso4F=cuso40-0.64*crystal, waterF=water0-0.36*crystal;
+ $("problem").innerHTML=`〔問題〕硫酸銅(II)の${hot}℃における飽和水溶液 ${f(M)}g を${cold}℃まで冷却すると，何gの結晶が析出するか。ただし，硫酸銅(II)の水に対する溶解度は，${hot}℃において${sH}，${cold}℃において${sC}であり，析出する結晶はCuSO₄・5H₂Oである。`;
+ $("answer").innerHTML=pill("析出結晶",`${f(crystal)} g`)+pill("整数値",`${fi(crystal)} g`)+pill("残るCuSO₄",`${f(cuso4F)} g`)+pill("残る水",`${f(waterF)} g`);
+ $("beakers").innerHTML=beaker(`${hot}℃`,water0,cuso40,0)+beaker(`${cold}℃`,waterF,cuso4F,crystal);
+ $("bars").innerHTML=bar("冷却前",[
+  {label:`水 ${f(water0)}g`,mass:water0,cls:"water"},
+  {label:`CuSO₄ ${f(cuso40)}g`,mass:cuso40,cls:"solute"}
+ ])+bar("析出した結晶の内訳",[
+  {label:`CuSO₄ ${f(0.64*crystal)}g`,mass:0.64*crystal,cls:"solute"},
+  {label:`結晶水 ${f(0.36*crystal)}g`,mass:0.36*crystal,cls:"hydrate"}
+ ])+bar("冷却後の溶液",[
+  {label:`水 ${f(waterF)}g`,mass:waterF,cls:"water"},
+  {label:`CuSO₄ ${f(cuso4F)}g`,mass:cuso4F,cls:"solute"}
+ ]);
+ $("formula").textContent=`高温側
+溶液 : CuSO₄ = ${f(100+sH)} : ${sH}
 
-function renderCool(){
- const kind=$("coolSub").value, sub=kind==="KNO3"?"KNO3":"CuSO4";
- const s1=sol(sub,val("hot")), s2=sol(sub,val("cold"));
- if(s1==null) return noData(val("hot")); if(s2==null) return noData(val("cold"));
- const M=val("solMass"), water0=M*100/(100+s1), solute0=M*s1/(100+s1);
- let crystal, waterF, soluteF, text;
- if(kind==="KNO3"){
-   waterF=water0; soluteF=waterF*s2/100; crystal=Math.max(0,solute0-soluteF);
-   text=`はじめの飽和溶液 ${f(M)}g
+飽和溶液 ${f(M)}g 中
+水 = ${f(M)} × 100 / ${f(100+sH)} = ${f(water0)}g
+CuSO₄ = ${f(M)} × ${sH} / ${f(100+sH)} = ${f(cuso40)}g
 
-高温側
-溶液 : 溶質 = ${f(100+s1)} : ${s1}
-溶質 = ${f(M)} × ${s1} / ${f(100+s1)} = ${f(solute0)}g
-水 = ${f(water0)}g
-
-低温側
-溶質 = 水 × ${s2} / 100
-= ${f(water0)} × ${s2} / 100
-= ${f(soluteF)}g
-
-析出量 = ${f(solute0)} - ${f(soluteF)} = ${f(crystal)}g`;
- } else {
-   crystal=(solute0-s2*water0/100)/(0.64-0.36*s2/100);
-   crystal=Math.max(0,crystal);
-   waterF=water0-0.36*crystal; soluteF=solute0-0.64*crystal;
-   text=`はじめの飽和溶液 ${f(M)}g
-
-高温側
-溶液 : 溶質 = ${f(100+s1)} : ${s1}
-CuSO₄ = ${f(solute0)}g
-水 = ${f(water0)}g
-
-CuSO₄・5H₂O が x g 析出
-CuSO₄部分 = 160/250 x
-結晶水 = 90/250 x
+CuSO₄・5H₂O が x g 析出する
+CuSO₄部分 = 160/250 x = 0.64x
+結晶水 = 90/250 x = 0.36x
 
 冷却後
-CuSO₄ = ${f(solute0)} - 160/250 x
-水 = ${f(water0)} - 90/250 x
+CuSO₄ = ${f(cuso40)} - 0.64x
+水 = ${f(water0)} - 0.36x
 
-低温側
-CuSO₄ : 水 = ${s2} : 100
+低温側の溶解度 ${sC} より
+(${f(cuso40)} - 0.64x) : (${f(water0)} - 0.36x)
+= ${sC} : 100
 
 x = ${f(crystal)}g`;
- }
- $("bars").innerHTML=
-  bar("冷却前",[
-   {label:`水 ${f(water0)}g`,mass:water0,cls:"water"},
-   {label:`溶質 ${f(solute0)}g`,mass:solute0,cls:"solute"}
-  ])+
-  bar("冷却後",[
-   {label:`水 ${f(waterF)}g`,mass:Math.max(0,waterF),cls:"water"},
-   {label:`溶質 ${f(soluteF)}g`,mass:Math.max(0,soluteF),cls:"solute"},
-   {label:`結晶 ${f(crystal)}g`,mass:crystal,cls:"crystal"}
-  ]);
- $("result").innerHTML=pill("高温側",`${s1} g`)+pill("低温側",`${s2} g`)+pill("析出量",`${f(crystal)} g`);
- $("formula").textContent=text;
 }
-
-function renderTable(){
- let h="<tr><th>物質</th>"+temps.map(t=>`<th>${t}℃</th>`).join("")+"</tr>";
- for(const k of Object.keys(data)){
-  h+=`<tr><td>${data[k].name}</td>`+temps.map(t=>{
-   const v=data[k].values[t];
-   return v==null?`<td class="missing">—</td>`:`<td>${v}</td>`;
-  }).join("")+"</tr>";
- }
- $("table").innerHTML=h;
-}
-
-function syncPair(a,b,view){
- $(a).addEventListener("input",()=>{$(b).value=$(a).value; if(view)$(view).textContent=$(a).value; render();});
- $(b).addEventListener("input",()=>{let n=Math.round(Number($(b).value)/10)*10; n=Math.min(100,Math.max(0,n)); $(a).value=n; $(b).value=n; if(view)$(view).textContent=n; render();});
+function updateVisibility(){
+ const hyd=mode.startsWith("hydrate");
+ $("normalSubBox").classList.toggle("hidden",hyd);
+ $("hydrateSubBox").classList.toggle("hidden",!hyd);
+ $("oneTemp").classList.toggle("hidden",mode==="cool"||mode==="hydrateCool");
+ $("twoTemp").classList.toggle("hidden",!(mode==="cool"||mode==="hydrateCool"));
+ $("waterBox").classList.toggle("hidden",mode==="cool"||mode==="hydrateCool");
+ $("solutionBox").classList.toggle("hidden",!(mode==="cool"||mode==="hydrateCool"));
+ $("dissolvedBox").classList.add("hidden");
 }
 function render(){
- $("normalControls").style.display=mode==="sat"?"":"none";
- $("coolControls").style.display=mode==="cool"?"":"none";
- $("hydrateControls").style.display=mode==="hydrate"?"":"none";
- $("tempView").textContent=$("temp").value; $("hotView").textContent=$("hot").value; $("coldView").textContent=$("cold").value; $("hTempView").textContent=$("hTemp").value;
- document.querySelectorAll("#tempBtns button").forEach(b=>b.classList.toggle("on",b.dataset.t===$("temp").value));
- if(mode==="sat") renderSat();
- if(mode==="cool") renderCool();
- if(mode==="hydrate") renderHydrate();
- renderTable();
+ updateVisibility();
+ const key=currentKey();
+ renderButtons("tempBtns","temp",temp,key); renderButtons("hotBtns","hot",hot,key); renderButtons("coldBtns","cold",cold,key);
+ if(mode==="max")renderMax();
+ if(mode==="cool")renderCool();
+ if(mode==="hydrateDissolve")renderHydrateDissolve();
+ if(mode==="hydrateCool")renderHydrateCool();
 }
-
-Object.keys(data).forEach(k=>{let o=document.createElement("option");o.value=k;o.textContent=data[k].name;$("sub").appendChild(o);});
-$("sub").value="KNO3";
-temps.forEach(t=>{let b=document.createElement("button");b.textContent=t+"℃";b.dataset.t=t;b.onclick=()=>{$("temp").value=t;$("tempNum").value=t;render();};$("tempBtns").appendChild(b);});
-document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");mode=b.dataset.mode;render();});
-syncPair("temp","tempNum","tempView"); syncPair("water","waterNum");
-syncPair("hot","hotNum","hotView"); syncPair("cold","coldNum","coldView"); syncPair("solMass","solMassNum");
-syncPair("hTemp","hTempNum","hTempView"); syncPair("hWater","hWaterNum");
-["sub","coolSub"].forEach(id=>$(id).addEventListener("change",render));
+function pair(a,b){$(a).oninput=()=>{$(b).value=$(a).value;render()};$(b).oninput=()=>{$(a).value=$(b).value;render()}}
+Object.keys(data).forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=data[k].name;$("sub").appendChild(o)});$("sub").value="KNO3";
+$("sub").onchange=()=>{temp=tempsFor($("sub").value).includes(40)?40:tempsFor($("sub").value)[0];hot=tempsFor($("sub").value).includes(60)?60:tempsFor($("sub").value).at(-1);cold=tempsFor($("sub").value).includes(10)?10:tempsFor($("sub").value)[0];render()};
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));b.classList.add("on");mode=b.dataset.mode;render();});
+pair("water","waterNum");pair("solutionMass","solutionMassNum");pair("dissolvedMass","dissolvedMassNum");
 render();
 </script>
-</body>
-</html>
+</body></html>
